@@ -1,0 +1,32 @@
+{
+    "name": "mikebywater/rest-now",
+    "description": "A simple service-now rest client",
+    "type": "library",
+    "require": {
+        "league/climate": "^3.4",
+        "monolog/monolog": "^1.23",
+        "guzzlehttp/guzzle": "^6.3",
+        "kamermans/guzzle-oauth2-subscriber": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.3",
+        "squizlabs/php_codesniffer": "^3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Now\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Now\\Tests\\": "tests"
+        }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mike Bywater",
+            "email": "mike.j.bywater@gmail.com"
+        }
+    ]
+}
