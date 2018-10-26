@@ -1,5 +1,7 @@
 ## Getting Started
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/b09eff4fc3e24202afd4b461b3b56497)](https://app.codacy.com/app/mikebywater/rest-now?utm_source=github.com&utm_medium=referral&utm_content=mikebywater/rest-now&utm_campaign=Badge_Grade_Dashboard)
+
 Install via composer
 
 ```  composer require mikebywater/rest-now ```
