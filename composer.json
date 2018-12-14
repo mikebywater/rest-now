@@ -1,5 +1,5 @@
 {
-    "name": "mikebywater/rest-now",
+    "name": "entanet/rest-now",
     "description": "A simple service-now rest client",
     "type": "library",
     "require": {
