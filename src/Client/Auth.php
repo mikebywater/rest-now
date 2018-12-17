@@ -16,6 +16,9 @@ class Auth
         $this->client = new \GuzzleHttp\Client([
             // URL for access_token request
             'base_uri' => $config->base_uri,
+            'Connection' => 'close',
+            CURLOPT_FORBID_REUSE => true,
+            CURLOPT_FRESH_CONNECT => true,
         ]);
 
         $this->options = ['form_params' =>
