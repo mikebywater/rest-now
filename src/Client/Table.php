@@ -41,7 +41,7 @@ class Table
 
     public function update($table,$data, $id)
     {
-        $response = $this->client->put('/api/now/table/'  . $table . '/' . $id, ['headers' => $this->headers, 'body' => json_encode($data)]);
+        $response = $this->client->patch('/api/now/table/'  . $table . '/' . $id, ['headers' => $this->headers, 'body' => json_encode($data)]);
         return json_decode($response->getBody());
     }
 
