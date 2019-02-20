@@ -51,5 +51,11 @@ class Table
         return json_decode($response->getBody());
     }
 
+    public function where($table, $field, $value, $operator = '=')
+    {
+        $response = $this->client->get('/api/now/table/'  . $table . '/?sysparm_query=' . $field . $operator . $value, ['headers' => $this->headers]);
+        return json_decode($response->getBody());
+    }
+
 
 }
