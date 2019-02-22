@@ -54,7 +54,7 @@ class Table
     public function where($table, $field, $value, $operator = '=', $limit = 1)
     {
         $response = $this->client->get('/api/now/table/'  . $table .
-            '/?sysparm_query=' . $field . $operator . $value .
+            '?sysparm_query=' . $field . $operator . $value .
             '&sysparm_limit=' . $limit , ['headers' => $this->headers]);
         
         return json_decode($response->getBody());
