@@ -13,20 +13,28 @@ class TableAttachment
 {
     protected $client;
     protected $headers;
+    protected $findHeaders;
 
     public function __construct(Auth $auth)
     {
+        $authToken = $auth->getToken();
+
         $this->headers =  [
-            'Authorization' => 'Bearer ' . $auth->getToken(),
+            'Authorization' => 'Bearer ' . $authToken,
             'Accept'        => 'application/json',
         ];
+        $this->findHeaders = [
+            'Authorization' => 'Bearer ' . $authToken,
+            'Accept'        => '*/*'
+        ];
+
         $this->client = $auth->client;
     }
 
     public function find($sysId){
 
-        $response = $this->client->get('/api/now/attachment/' . $sysId . '/file', ['headers' => $this->headers]);
-        return json_decode($response->getBody());
+        $response = $this->client->get('/api/now/attachment/' . $sysId . '/file', ['headers' => $this->findHeaders]);
+        return $response->getBody()->getContents();
     }
 
     public function findMeta($sysId){
