@@ -34,17 +34,12 @@ class TableAttachment
         return json_decode($response->getBody());
     }
 
-    public function upload($tableName, $sysId, $fileContent){
-        $response = $this->client->post('/api/now/attachment/upload',[
-            'headers'=> array_merge($this->headers, ['Content-Type'=> 'multipart/form-data']),
-            'form_params' => [
-                'table_name' => $tableName,
-                'record_sys_id' => $sysId
-            ]
-        ])
-            ->addPostFiles([
-                'file'=> $fileContent,
-            ]);
+    public function upload($table, $data, $id)
+    {
+        $response = $this->client->post('/api/now/attachment/file?table_name=' . $table . '&table_sys_id='.$id.'&file_name='.$data['filename'],[
+            'headers' => array_merge($this->headers, ['Content-Type' => $data['mimeType']]),
+            'body' => $data['contents']
+        ]);
         return json_decode($response->getBody());
     }
 
