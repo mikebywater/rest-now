@@ -9,9 +9,10 @@ class Table
 
     public $client;
 
+    protected $whereFields;
+
     public function __construct(Auth $auth)
     {
-
         $this->headers =  [
           'Authorization' => 'Bearer ' . $auth->getToken(),
            'Accept'        => 'application/json',
@@ -48,6 +49,28 @@ class Table
     public function delete($table, $id)
     {
         $response = $this->client->delete('/api/now/table/'  . $table . '/' . $id, ['headers' => $this->headers]);
+        return json_decode($response->getBody());
+    }
+
+    public function whereMultiple($table, $field, $value, $operator = '=', $joinOperator = '^')
+    {
+        if(empty($this->whereFields[$table])) {
+            $this->whereFields[$table][] = ['field' => $field, 'operator' => $operator, 'value' => $value, 'joinOperator' => ''];
+        } else {
+            $this->whereFields[$table][] = ['field' => $field, 'operator' => $operator, 'value' => $value, 'joinOperator' => $joinOperator];
+        }
+        return $this;
+    }
+
+    public function whereResult($table, $limit = 1) {
+        $query = '/api/now/table/'  . $table . '?sysparm_query=';
+        foreach($this->whereFields[$table] as $condition) {
+            $strCondition = $condition['joinOperator'] . $condition['field'] . $condition['operator'] . $condition['value'];
+            $query .= $strCondition;
+        }
+        $query .= '&sysparm_limit=' . $limit;
+        $response = $this->client->get($query , ['headers' => $this->headers]);
+        unset($this->whereFields[$table]);
         return json_decode($response->getBody());
     }
 
