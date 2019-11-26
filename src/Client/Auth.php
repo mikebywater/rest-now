@@ -2,6 +2,8 @@
 
 namespace Now\Client;
 
+use Illuminate\Support\Facades\Cache;
+
 class Auth
 {
     public $client;
@@ -36,10 +38,17 @@ class Auth
      */
     public function getToken()
     {
-        $response = $this->client->post('/oauth_token.do', $this->options );
-        $token = json_decode($response->getBody())->access_token;
-        return $token;
+        // Try and retrieve a valid oauth token
+        $cachedToken = Cache::get('servicenow_oauth_token');
+
+        // It may have expired, or doesnt exist. Access tokens last for 30 minutes
+        if ($cachedToken == null) {
+            $response = $this->client->post('/oauth_token.do', $this->options);
+            $decodedResponse = json_decode($response->getBody());
+            $cachedToken = $decodedResponse->access_token;
+            Cache::put('servicenow_oauth_token', $cachedToken, now()->addSeconds($decodedResponse->expires_in));
+        }
+
+        return $cachedToken;
     }
-
-
 }
