@@ -2,6 +2,7 @@
     "name": "entanet/rest-now",
     "description": "A simple service-now rest client",
     "type": "library",
+    "version": "2.0",
     "require": {
         "league/climate": "^3.4",
         "monolog/monolog": "^2.0.0",

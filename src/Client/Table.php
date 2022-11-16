@@ -8,47 +8,57 @@ class Table
 {
 
     public $client;
+    protected $headers;
+    protected $auth;
 
     protected $whereFields;
 
     public function __construct(Auth $auth)
     {
-        $this->headers =  [
-          'Authorization' => 'Bearer ' . $auth->getToken(),
-           'Accept'        => 'application/json',
-       ];
+        $this->auth = $auth;
         $this->client = $auth->client;
+    }
+
+    protected function getHeaders()
+    {
+        if (!$this->headers) {
+            $this->headers =  [
+              'Authorization' => 'Bearer ' . $this->auth->getToken(),
+               'Accept'        => 'application/json',
+            ];
+        }
+        return $this->headers;
     }
 
     public function all($table)
     {
-        $response = $this->client->get('/api/now/table/' . $table, ['headers' => $this->headers]);
+        $response = $this->client->get('/api/now/table/' . $table, ['headers' => $this->getHeaders()]);
 
         return json_decode($response->getBody());
     }
 
     public function find($table,$id)
     {
-        $response = $this->client->get('/api/now/table/' . $table . '/' . $id, ['headers' => $this->headers]);
+        $response = $this->client->get('/api/now/table/' . $table . '/' . $id, ['headers' => $this->getHeaders()]);
 
         return json_decode($response->getBody());
     }
 
     public function create($table,$data)
     {
-        $response = $this->client->post('/api/now/table/' . $table, ['headers' => $this->headers, 'body' => json_encode($data)]);
+        $response = $this->client->post('/api/now/table/' . $table, ['headers' => $this->getHeaders(), 'body' => json_encode($data)]);
         return json_decode($response->getBody());
     }
 
     public function update($table,$data, $id)
     {
-        $response = $this->client->patch('/api/now/table/'  . $table . '/' . $id, ['headers' => $this->headers, 'body' => json_encode($data)]);
+        $response = $this->client->patch('/api/now/table/'  . $table . '/' . $id, ['headers' => $this->getHeaders(), 'body' => json_encode($data)]);
         return json_decode($response->getBody());
     }
 
     public function delete($table, $id)
     {
-        $response = $this->client->delete('/api/now/table/'  . $table . '/' . $id, ['headers' => $this->headers]);
+        $response = $this->client->delete('/api/now/table/'  . $table . '/' . $id, ['headers' => $this->getHeaders()]);
         return json_decode($response->getBody());
     }
 
@@ -69,7 +79,7 @@ class Table
             $query .= $strCondition;
         }
         $query .= '&sysparm_limit=' . $limit;
-        $response = $this->client->get($query , ['headers' => $this->headers]);
+        $response = $this->client->get($query, ['headers' => $this->getHeaders()]);
         unset($this->whereFields[$table]);
         return json_decode($response->getBody());
     }
@@ -78,8 +88,8 @@ class Table
     {
         $response = $this->client->get('/api/now/table/'  . $table .
             '?sysparm_query=' . $field . $operator . $value .
-            '&sysparm_limit=' . $limit , ['headers' => $this->headers]);
-        
+            '&sysparm_limit=' . $limit, ['headers' => $this->getHeaders()]);
+
         return json_decode($response->getBody());
     }
 
