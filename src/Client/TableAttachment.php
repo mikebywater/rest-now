@@ -51,7 +51,7 @@ class TableAttachment
     }
 
     public function findMeta($sysId){
-        $response = $this->client->get('api/now/attachment/'.$sysId , ['headers' => $this->getHeaders()]);
+        $response = $this->client->get('/api/now/...'.$sysId , ['headers' => $this->getHeaders()]);
         return json_decode($response->getBody());
     }
 
