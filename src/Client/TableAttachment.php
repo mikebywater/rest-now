@@ -69,4 +69,12 @@ class TableAttachment
         return json_decode($response->getBody());
     }
 
+    public function filter(string $table, string $sysId)
+    {
+        $response = $this->client->get(
+            '/api/now/attachment?table_name=' . $table . '&table_sys_id=' . $sysId, ['headers' => $this->headers]
+        );
+        return json_decode($response->getBody());
+    }
+
 }
