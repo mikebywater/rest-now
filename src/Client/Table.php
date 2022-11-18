@@ -93,5 +93,13 @@ class Table
         return json_decode($response->getBody());
     }
 
+    public function whereWithDisplayValues($table, $field, $value, $operator = '=', $limit = 1)
+    {
+        $response = $this->client->get('/api/now/table/'  . $table .
+            '?sysparm_query=' . $field . $operator . $value .
+            '&sysparm_display_value=true' .
+            '&sysparm_limit=' . $limit , ['headers' => $this->headers]);
+        return json_decode($response->getBody());
+
 
 }
