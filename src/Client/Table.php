@@ -100,7 +100,7 @@ class Table
             '?sysparm_query=' . $field . $operator . $value .
             '&sysparm_display_value=true' .
             '&sysparm_limit=' . $limit,
-            ['headers' => $this->headers]
+            ['headers' =>  $this->getHeaders()]
         );
         return json_decode($response->getBody());
     }

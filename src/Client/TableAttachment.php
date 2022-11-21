@@ -72,7 +72,7 @@ class TableAttachment
     public function filter(string $table, string $sysId)
     {
         $response = $this->client->get(
-            '/api/now/attachment?table_name=' . $table . '&table_sys_id=' . $sysId, ['headers' => $this->headers]
+            '/api/now/attachment?table_name=' . $table . '&table_sys_id=' . $sysId, ['headers' =>  $this->getHeaders()]
         );
         return json_decode($response->getBody());
     }
