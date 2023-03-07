@@ -7,13 +7,12 @@ class RestApi extends Table
 
     public function restApiGet($nameSpace, $apiName, $endPointName, $queryParameters)
     {
-        $queryString = $this->getQueryString($queryParameters);
         $response = $this->client->get(
             '/api/' .
             $nameSpace . '/' .
             $apiName . '/' .
             $endPointName .
-            $queryString,
+            $this->getQueryString($queryParameters),
             ['headers' => $this->getHeaders()]
         );
 
@@ -22,13 +21,12 @@ class RestApi extends Table
 
     public function restApiPost($nameSpace, $apiName, $endPointName, $queryParameters = [], $data = [])
     {
-        $queryString = !empty($queryParameters) ? $this->getQueryString($queryParameters) : '';
         $response = $this->client->post(
             '/api/' .
             $nameSpace . '/' .
             $apiName . '/' .
             $endPointName .
-            $queryString,
+            $this->getQueryString($queryParameters),
             ['headers' => $this->getHeaders(), 'form_params' => $data]
         );
 
@@ -37,6 +35,9 @@ class RestApi extends Table
 
     public function getQueryString($queryParameters)
     {
+        if (empty($queryParameters)) {
+            return '';
+        }
         $queryString = '?';
         $operator = '';
         foreach ($queryParameters as $queryParameter => $queryValue) {
