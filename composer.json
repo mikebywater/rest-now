@@ -5,7 +5,6 @@
     "version": "2.3.0",
     "require": {
         "league/climate": "^3.4",
-        "monolog/monolog": "^2.0.0",
         "guzzlehttp/guzzle": "^6.3",
         "kamermans/guzzle-oauth2-subscriber": "^1.0"
     },
