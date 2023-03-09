@@ -5,7 +5,7 @@ namespace Now\Client;
 class RestApi extends Table
 {
 
-    public function restApiGet($nameSpace, $apiName, $endPointName, $queryParameters)
+    public function restApiGet($nameSpace, $apiName, $endPointName, $queryParameters, $headers = [])
     {
         $response = $this->client->get(
             '/api/' .
@@ -13,13 +13,13 @@ class RestApi extends Table
             $apiName . '/' .
             $endPointName .
             $this->getQueryString($queryParameters),
-            ['headers' => $this->getHeaders()]
+            ['headers' => array_merge($this->getHeaders(), $headers)]
         );
 
         return json_decode($response->getBody());
     }
 
-    public function restApiPost($nameSpace, $apiName, $endPointName, $queryParameters = [], $data = [])
+    public function restApiPost($nameSpace, $apiName, $endPointName, $queryParameters = [], $data = [], $headers = [])
     {
         $response = $this->client->post(
             '/api/' .
@@ -27,7 +27,7 @@ class RestApi extends Table
             $apiName . '/' .
             $endPointName .
             $this->getQueryString($queryParameters),
-            ['headers' => $this->getHeaders(), 'form_params' => $data]
+            ['headers' => array_merge($this->getHeaders(), $headers), 'form_params' => $data]
         );
 
         return json_decode($response->getBody());
