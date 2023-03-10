@@ -19,8 +19,14 @@ class RestApi extends Table
         return json_decode($response->getBody());
     }
 
-    public function restApiPost($nameSpace, $apiName, $endPointName, $queryParameters = [], $data = [], $headers = [])
-    {
+    public function restApiPost(
+        $nameSpace,
+        $apiName,
+        $endPointName,
+        $queryParameters = [],
+        $data = [],
+        $headers = ['Content-Type' => 'application/json']
+    ) {
         $response = $this->client->post(
             '/api/' .
             $nameSpace . '/' .
