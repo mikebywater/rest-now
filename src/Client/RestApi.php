@@ -33,7 +33,7 @@ class RestApi extends Table
             $apiName . '/' .
             $endPointName .
             $this->getQueryString($queryParameters),
-            ['headers' => array_merge($this->getHeaders(), $headers), 'form_params' => $data]
+            ['headers' => array_merge($this->getHeaders(), $headers), 'json' => $data]
         );
 
         return json_decode($response->getBody());
