@@ -2,7 +2,7 @@
     "name": "entanet/rest-now",
     "description": "A simple service-now rest client",
     "type": "library",
-    "version": "2.3.3",
+    "version": "2.3.4",
     "require": {
         "league/climate": "^3.4",
         "guzzlehttp/guzzle": "^6.3",
