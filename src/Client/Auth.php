@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 class Auth
 {
     public $client;
+    public $options;
 
     /**
      * Auth constructor.
