@@ -1,8 +1,8 @@
 {
-    "name": "oleshchss/rest-now",
+    "name": "entanet/rest-now",
     "description": "A simple service-now rest client",
     "type": "library",
-    "version": "2.4.1",
+    "version": "2.4.0",
     "require": {
         "league/climate": "^3.4",
         "guzzlehttp/guzzle": "^7.5",
