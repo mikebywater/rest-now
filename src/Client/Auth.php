@@ -63,8 +63,8 @@ class Auth
     protected function buildRetryHandler()
     {
         $this->handlerStack = HandlerStack::create();
-        $maxRetries = config('http_client.max_retries');
-        $maxDelayBetweenRetriesInSeconds = config('http_client.max_delay_between_retries_in_seconds');
+        $maxRetries = config('http_client.max_retries') ?? 5;
+        $maxDelayBetweenRetriesInSeconds = config('http_client.max_delay_between_retries_in_seconds') ?? 60;
         $decider = function (
             $retries,
             RequestInterface $request,
