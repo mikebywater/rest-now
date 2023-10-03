@@ -2,12 +2,18 @@
 
 namespace Now\Client;
 
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\RetryMiddleware;
 use Illuminate\Support\Facades\Cache;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class Auth
 {
     public $client;
     public $options;
+    protected $handlerStack;
 
     /**
      * Auth constructor.
@@ -15,8 +21,9 @@ class Auth
      */
     public function __construct(Config $config)
     {
-
+        $this->buildRetryHandler();
         $this->client = new \GuzzleHttp\Client([
+            'handler' => $this->handlerStack,
             // URL for access_token request
             'base_uri' => $config->base_uri,
             'Connection' => 'close',
@@ -51,5 +58,40 @@ class Auth
         }
 
         return $cachedToken;
+    }
+
+    protected function buildRetryHandler()
+    {
+        $this->handlerStack = HandlerStack::create();
+        $maxRetries = config('http_client.max_retries');
+        $maxDelayBetweenRetriesInSeconds = config('http_client.max_delay_between_retries_in_seconds');
+        $decider = function (
+            $retries,
+            RequestInterface $request,
+            ResponseInterface $response = null,
+            \Exception $exception = null
+        ) use ($maxRetries) {
+            if ($retries >= $maxRetries) {
+                return false;
+            }
+
+            if ($exception instanceof \Exception) {
+                return true;
+            }
+
+            if ($response) {
+                if ($response->getStatusCode() >= 400) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
+        $delay = function ($retries) use ($maxDelayBetweenRetriesInSeconds) {
+            return min(($maxDelayBetweenRetriesInSeconds * 1000), RetryMiddleware::exponentialDelay($retries));
+        };
+
+        $this->handlerStack->push(Middleware::retry($decider, $delay));
     }
 }
