@@ -6,6 +6,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\RetryMiddleware;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -71,21 +72,31 @@ class Auth
             ResponseInterface $response = null,
             \Exception $exception = null
         ) use ($maxRetries) {
+            $retry = false;
             if ($retries >= $maxRetries) {
-                return false;
+                return $retry;
             }
 
             if ($exception instanceof \Exception) {
-                return true;
+                $retry = true;
             }
 
             if ($response) {
                 if ($response->getStatusCode() >= 400) {
-                    return true;
+                    $retry = true;
                 }
             }
 
-            return false;
+            if ($retry && $retries > 0) {
+                $uri = $request->getUri();
+                Log::warning('Retrying request', [
+                    'retry_attempt' => $retries,
+                    'uri' => $uri->getScheme() . '://' . $uri->getHost() . $uri->getPath() . '?' . $uri->getQuery(),
+                    'body' => $request->getBody()->getContents(),
+                ]);
+            }
+
+            return $retry;
         };
 
         $delay = function ($retries) use ($maxDelayBetweenRetriesInSeconds) {
