@@ -87,10 +87,10 @@ class Auth
                 }
             }
 
-            if ($retry && $retries > 0) {
+            if ($retry) {
                 $uri = $request->getUri();
                 Log::warning('Retrying request', [
-                    'retry_attempt' => $retries,
+                    'retry_attempt' => $retries + 1,
                     'uri' => $uri->getScheme() . '://' . $uri->getHost() . $uri->getPath() . '?' . $uri->getQuery(),
                     'body' => $request->getBody()->getContents(),
                 ]);
