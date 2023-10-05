@@ -14,9 +14,8 @@ class Auth
 {
     /**
      * Default max retries for retry middleware
-     * retries starts at 0 so set to one less than is needed
      */
-    CONST DEFAULT_MAX_RETRIES = 4;
+    CONST DEFAULT_MAX_RETRIES = 5;
 
     /**
      * Default max delay between retries in seconds
