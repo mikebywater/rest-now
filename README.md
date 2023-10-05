@@ -21,6 +21,16 @@ $config->password = 'secret_password';
 
 ```
 
+a second config class can be used to set http max retries and max delay in second values, however to ensure 
+rest-now does not break, some default values have been included in the auth class in some CONST variables
+    
+``` php
+http_client.max_delay_between_retries_in_seconds
+http_client.max_retries
+...
+
+
+
 ### Authentication
 
 
