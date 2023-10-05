@@ -95,7 +95,6 @@ class Auth
             $doRetry = $retries < $maxRetries
                 && ($exception instanceof \Exception || ($response && $response->getStatusCode() >= 400));
 
-
             if ($doRetry) {
                 $uri = $request->getUri();
                 Log::warning('Retrying request', [
