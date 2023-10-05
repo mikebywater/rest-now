@@ -12,9 +12,24 @@ use Psr\Http\Message\ResponseInterface;
 
 class Auth
 {
+    /**
+     * Default max retries for retry middleware
+     * retries starts at 0 so set to one less than is needed
+     */
+    CONST DEFAULT_MAX_RETRIES = 4;
+
+    /**
+     * Default max delay between retries in seconds
+     */
+    CONST DEFAULT_MAX_DELAY_BETWEEN_RETRIES_IN_SECONDS = 60;
+
+    /**
+     * @var HandlerStack
+     */
+    protected HandlerStack $handlerStack;
+
     public $client;
     public $options;
-    protected $handlerStack;
 
     /**
      * Auth constructor.
@@ -33,13 +48,14 @@ class Auth
         ]);
 
         $this->options = ['form_params' =>
-                        [
-                            'grant_type' => 'password',
-                            'client_id' => $config->client_id,
-                            'client_secret' => $config->client_secret,
-                            'username' => $config->username,
-                            'password' => $config->password,
-                            ] ];
+            [
+                'grant_type' => 'password',
+                'client_id' => $config->client_id,
+                'client_secret' => $config->client_secret,
+                'username' => $config->username,
+                'password' => $config->password,
+            ]
+        ];
     }
 
     /**
@@ -64,30 +80,24 @@ class Auth
     protected function buildRetryHandler()
     {
         $this->handlerStack = HandlerStack::create();
-        $maxRetries = config('http_client.max_retries') ?? 5;
-        $maxDelayBetweenRetriesInSeconds = config('http_client.max_delay_between_retries_in_seconds') ?? 60;
-        $decider = function (
+        $this->handlerStack->push(Middleware::retry($this->shouldAttemptRetry(),  $this->setDelay()));
+    }
+
+    protected function shouldAttemptRetry()
+    {
+        $maxRetries = config('http_client.max_retries') ?? self::DEFAULT_MAX_RETRIES;
+
+        return function (
             $retries,
             RequestInterface $request,
             ResponseInterface $response = null,
             \Exception $exception = null
         ) use ($maxRetries) {
-            $retry = false;
-            if ($retries >= $maxRetries) {
-                return $retry;
-            }
+            $doRetry = $retries < $maxRetries
+                && ($exception instanceof \Exception || ($response && $response->getStatusCode() >= 400));
 
-            if ($exception instanceof \Exception) {
-                $retry = true;
-            }
 
-            if ($response) {
-                if ($response->getStatusCode() >= 400) {
-                    $retry = true;
-                }
-            }
-
-            if ($retry) {
+            if ($doRetry) {
                 $uri = $request->getUri();
                 Log::warning('Retrying request', [
                     'retry_attempt' => $retries + 1,
@@ -96,13 +106,17 @@ class Auth
                 ]);
             }
 
-            return $retry;
+            return $doRetry;
         };
+    }
 
-        $delay = function ($retries) use ($maxDelayBetweenRetriesInSeconds) {
+    protected function setDelay()
+    {
+        $maxDelayBetweenRetriesInSeconds = config('http_client.max_delay_between_retries_in_seconds')
+            ?? self::DEFAULT_MAX_DELAY_BETWEEN_RETRIES_IN_SECONDS;
+
+        return function ($retries) use ($maxDelayBetweenRetriesInSeconds) {
             return min(($maxDelayBetweenRetriesInSeconds * 1000), RetryMiddleware::exponentialDelay($retries));
         };
-
-        $this->handlerStack->push(Middleware::retry($decider, $delay));
     }
 }
