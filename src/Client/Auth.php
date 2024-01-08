@@ -12,21 +12,12 @@ use Psr\Http\Message\ResponseInterface;
 
 class Auth
 {
-    /**
-     * Default max retries for retry middleware
-     */
-    CONST DEFAULT_MAX_RETRIES = 5;
+    CONST DEFAULT_INCREMENTAL_RETRY_IS_ACTIVE = false;
 
-    /**
-     * Default max delay between retries in seconds
-     */
+    CONST DEFAULT_MAX_RETRIES = 0;
     CONST DEFAULT_MAX_DELAY_BETWEEN_RETRIES_IN_SECONDS = 60;
 
-    /**
-     * @var HandlerStack
-     */
     protected HandlerStack $handlerStack;
-
     public $client;
     public $options;
 
@@ -36,7 +27,8 @@ class Auth
      */
     public function __construct(Config $config)
     {
-        $this->buildRetryHandler();
+        $this->buildHandler();
+
         $this->client = new \GuzzleHttp\Client([
             'handler' => $this->handlerStack,
             // URL for access_token request
@@ -76,10 +68,13 @@ class Auth
         return $cachedToken;
     }
 
-    protected function buildRetryHandler()
+    protected function buildHandler()
     {
         $this->handlerStack = HandlerStack::create();
-        $this->handlerStack->push(Middleware::retry($this->shouldAttemptRetry(),  $this->setDelay()));
+        $incrementalRetryIsActive = config('http_client.incremental_retry_is_active') ?? self::DEFAULT_INCREMENTAL_RETRY_IS_ACTIVE;
+        if ($incrementalRetryIsActive) {
+            $this->handlerStack->push(Middleware::retry($this->shouldAttemptRetry(), $this->setDelay()));
+        }
     }
 
     protected function shouldAttemptRetry()
