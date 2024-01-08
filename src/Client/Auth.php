@@ -13,8 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 class Auth
 {
     CONST DEFAULT_INCREMENTAL_RETRY_IS_ACTIVE = false;
-
-    CONST DEFAULT_MAX_RETRIES = 0;
+    CONST DEFAULT_MAX_RETRIES = 5;
     CONST DEFAULT_MAX_DELAY_BETWEEN_RETRIES_IN_SECONDS = 60;
 
     protected HandlerStack $handlerStack;
