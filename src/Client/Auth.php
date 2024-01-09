@@ -3,6 +3,7 @@
 namespace Now\Client;
 
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Client;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\RetryMiddleware;
 use Illuminate\Support\Facades\Cache;
@@ -17,8 +18,8 @@ class Auth
     const DEFAULT_MAX_DELAY_BETWEEN_RETRIES_IN_SECONDS = 60;
 
     protected HandlerStack $handlerStack;
-    public $client;
-    public $options;
+    public Client $client;
+    public array $options;
 
     /**
      * Auth constructor.
@@ -28,7 +29,7 @@ class Auth
     {
         $this->buildHandler();
 
-        $this->client = new \GuzzleHttp\Client([
+        $this->client = new Client([
             'handler' => $this->handlerStack,
             // URL for access_token request
             'base_uri' => $config->base_uri,

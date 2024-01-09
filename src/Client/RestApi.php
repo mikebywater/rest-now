@@ -4,9 +4,6 @@ namespace Now\Client;
 
 class RestApi extends Table
 {
-    const CONTENT_TYPE_JSON = 'application/json';
-    const QUERY_STRING_SEPARATOR = '&';
-
     public function restApiGet($nameSpace, $apiName, $endPointName, $queryParameters, $headers = [])
     {
         $url = $this->buildUrl($nameSpace, $apiName, $endPointName, $queryParameters);
@@ -21,7 +18,7 @@ class RestApi extends Table
         $endPointName,
         $queryParameters = [],
         $data = [],
-        $headers = ['Content-Type' => self::CONTENT_TYPE_JSON]
+        $headers = ['Content-Type' => 'application/json']
     ) {
         $url = $this->buildUrl($nameSpace, $apiName, $endPointName, $queryParameters);
         $response = $this->client->post($url, ['headers' => array_merge($this->getHeaders(), $headers), 'json' => $data]);
@@ -35,7 +32,7 @@ class RestApi extends Table
         $endPointName,
         $queryParameters = [],
         $data = [],
-        $headers = ['Content-Type' => self::CONTENT_TYPE_JSON]
+        $headers = ['Content-Type' => 'application/json']
     ) {
         $url = $this->buildUrl($nameSpace, $apiName, $endPointName, $queryParameters);
         $response = $this->client->patch($url, ['headers' => array_merge($this->getHeaders(), $headers), 'json' => $data]);
@@ -47,7 +44,7 @@ class RestApi extends Table
         if (empty($queryParameters)) {
             return '';
         }
-        return '?' . http_build_query($queryParameters, '', self::QUERY_STRING_SEPARATOR);
+        return '?' . http_build_query($queryParameters, '', '&');
     }
 
     private function buildUrl(string $nameSpace, string $apiName, string $endPointName, array $queryParameters): string
