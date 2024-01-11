@@ -39,6 +39,19 @@ class RestApi extends Table
         return json_decode($response->getBody());
     }
 
+    public function restApiPut(
+        $nameSpace,
+        $apiName,
+        $endPointName,
+        $queryParameters = [],
+        $data = [],
+        $headers = ['Content-Type' => 'application/json']
+    ) {
+        $url = $this->buildUrl($nameSpace, $apiName, $endPointName, $queryParameters);
+        $response = $this->client->put($url, ['headers' => array_merge($this->getHeaders(), $headers), 'json' => $data]);
+        return json_decode($response->getBody());
+    }
+
     public function buildQueryString($queryParameters): string
     {
         if (empty($queryParameters)) {
